@@ -1,10 +1,14 @@
 export interface NewsArticle {
   id: string;
+  slug?: string;
+  wpId?: number;
   title: string;
   subtitle?: string;
   summary: string;
   content: string[];
+  contentHtml?: string;
   categoryId: string;
+  categoryName?: string;
   author: string;
   publishedAt: string;
   readTime: string;
@@ -15,6 +19,8 @@ export interface NewsArticle {
   isBreaking?: boolean;
   isTrending?: boolean;
   isLeadStory?: boolean;
+  isWordPress?: boolean;
+  wpLink?: string;
 }
 
 export interface NewsCategory {
@@ -23,6 +29,66 @@ export interface NewsCategory {
   nameTa: string;
   nameEn: string;
   description: string;
+  wpId?: number;
+}
+
+export interface WPPost {
+  id: number;
+  date: string;
+  date_gmt: string;
+  guid: { rendered: string };
+  modified: string;
+  modified_gmt: string;
+  slug: string;
+  status: string;
+  type: string;
+  link: string;
+  sticky?: boolean;
+  title: { rendered: string };
+  content: { rendered: string; protected?: boolean };
+  excerpt: { rendered: string; protected?: boolean };
+  author: number;
+  featured_media: number;
+  categories: number[];
+  tags: number[];
+  _embedded?: {
+    author?: Array<{
+      id: number;
+      name: string;
+      url: string;
+      description?: string;
+      slug?: string;
+      avatar_urls?: Record<string, string>;
+    }>;
+    'wp:featuredmedia'?: Array<{
+      id: number;
+      source_url: string;
+      caption?: { rendered: string };
+      alt_text?: string;
+      media_details?: {
+        width?: number;
+        height?: number;
+        sizes?: Record<string, { source_url: string; width?: number; height?: number }>;
+      };
+    }>;
+    'wp:term'?: Array<Array<{
+      id: number;
+      name: string;
+      slug: string;
+      taxonomy: string;
+    }>>;
+  };
+}
+
+export interface WPCategory {
+  id: number;
+  count: number;
+  description: string;
+  link: string;
+  name: string;
+  slug: string;
+  taxonomy: string;
+  parent: number;
 }
 
 export const NEWS_CATEGORIES: NewsCategory[] = [

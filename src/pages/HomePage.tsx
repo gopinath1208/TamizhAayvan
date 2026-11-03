@@ -8,12 +8,14 @@ import { Flame, Compass, ChevronRight } from 'lucide-react';
 
 interface HomePageProps {
   articles: NewsArticle[];
+  breakingNews?: string[];
   onSelectArticle: (article: NewsArticle) => void;
   onNavigateCategory: (slug: string) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   articles,
+  breakingNews,
   onSelectArticle,
   onNavigateCategory
 }) => {
@@ -30,8 +32,14 @@ export const HomePage: React.FC<HomePageProps> = ({
         <AdSlot slotId="HOME_TOP_BANNER" />
       </div>
 
-      {/* Breaking News Ticker */}
-      <BreakingNewsTicker onSelectHeadline={() => onSelectArticle(leadArticle)} />
+      {/* Breaking News Ticker with live headlines */}
+      <BreakingNewsTicker
+        headlines={breakingNews}
+        onSelectHeadline={(idx) => {
+          if (articles[idx]) onSelectArticle(articles[idx]);
+          else onSelectArticle(leadArticle);
+        }}
+      />
 
       {/* 2. HOMEPAGE HERO SECTION AD */}
       {/* Position: Below the Breaking News ticker and before the main news content */}

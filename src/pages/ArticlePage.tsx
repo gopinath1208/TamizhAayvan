@@ -46,8 +46,24 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
   };
 
   // Splitting paragraphs for strategic ad insertion after paragraph 3
-  const topParagraphs = article.content.slice(0, 3);
-  const remainingParagraphs = article.content.slice(3);
+  const hasHtmlContent = Boolean(article.contentHtml && article.contentHtml.trim());
+  
+  // Split HTML into top and remaining chunks around the 3rd paragraph
+  let topHtml = '';
+  let bottomHtml = '';
+  if (hasHtmlContent && article.contentHtml) {
+    const parts = article.contentHtml.split('</p>');
+    if (parts.length > 3) {
+      topHtml = parts.slice(0, 3).join('</p>') + '</p>';
+      bottomHtml = parts.slice(3).join('</p>');
+    } else {
+      topHtml = article.contentHtml;
+      bottomHtml = '';
+    }
+  }
+
+  const topParagraphs = article.content ? article.content.slice(0, 3) : [];
+  const remainingParagraphs = article.content ? article.content.slice(3) : [];
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-4">
@@ -151,21 +167,28 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
             )}
           </figure>
 
-          {/* Article Narrative Body - First 3 Paragraphs with Drop Cap */}
-          <div className="space-y-4 text-stone-800 text-base md:text-lg leading-relaxed font-sans max-w-none">
-            {topParagraphs.map((para, idx) => (
-              <p
-                key={idx}
-                className={
-                  idx === 0
-                    ? 'first-letter:text-4xl first-letter:font-serif first-letter:font-bold first-letter:float-left first-letter:mr-2.5 first-letter:text-red-900 first-letter:leading-none'
-                    : ''
-                }
-              >
-                {para}
-              </p>
-            ))}
-          </div>
+          {/* Article Narrative Body - First Paragraphs with Ad in the Middle */}
+          {hasHtmlContent ? (
+            <div
+              className="prose prose-stone max-w-none text-stone-800 text-base md:text-lg leading-relaxed font-sans space-y-4 [&>p]:mb-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:font-serif [&>h2]:text-stone-900 [&>h3]:text-lg [&>h3]:font-bold [&>blockquote]:border-l-4 [&>blockquote]:border-red-800 [&>blockquote]:pl-4 [&>blockquote]:italic [&>img]:rounded [&>img]:aspect-video [&>img]:object-cover"
+              dangerouslySetInnerHTML={{ __html: topHtml }}
+            />
+          ) : (
+            <div className="space-y-4 text-stone-800 text-base md:text-lg leading-relaxed font-sans max-w-none">
+              {topParagraphs.map((para, idx) => (
+                <p
+                  key={idx}
+                  className={
+                    idx === 0
+                      ? 'first-letter:text-4xl first-letter:font-serif first-letter:font-bold first-letter:float-left first-letter:mr-2.5 first-letter:text-red-900 first-letter:leading-none'
+                      : ''
+                  }
+                >
+                  {para}
+                </p>
+              ))}
+            </div>
+          )}
 
           {/* 6.2 & 6.3 ARTICLE MIDDLE AD (In-Content Advertisement) */}
           {/* Position: After the third or fourth article paragraph / around the middle */}
@@ -173,12 +196,21 @@ export const ArticlePage: React.FC<ArticlePageProps> = ({
             <AdSlot slotId="ARTICLE_MIDDLE_AD" />
           </div>
 
-          {/* Remaining Paragraphs & Key Takeaways */}
-          <div className="space-y-4 text-stone-800 text-base md:text-lg leading-relaxed font-sans max-w-none mt-4">
-            {remainingParagraphs.map((para, idx) => (
-              <p key={idx}>{para}</p>
-            ))}
-          </div>
+          {/* Remaining Paragraphs & Content */}
+          {hasHtmlContent ? (
+            bottomHtml && (
+              <div
+                className="prose prose-stone max-w-none text-stone-800 text-base md:text-lg leading-relaxed font-sans space-y-4 mt-4 [&>p]:mb-4 [&>h2]:text-xl [&>h2]:font-bold [&>h2]:font-serif [&>h2]:text-stone-900 [&>h3]:text-lg [&>h3]:font-bold [&>blockquote]:border-l-4 [&>blockquote]:border-red-800 [&>blockquote]:pl-4 [&>blockquote]:italic [&>img]:rounded [&>img]:aspect-video [&>img]:object-cover"
+                dangerouslySetInnerHTML={{ __html: bottomHtml }}
+              />
+            )
+          ) : (
+            <div className="space-y-4 text-stone-800 text-base md:text-lg leading-relaxed font-sans max-w-none mt-4">
+              {remainingParagraphs.map((para, idx) => (
+                <p key={idx}>{para}</p>
+              ))}
+            </div>
+          )}
 
           {/* Tags */}
           <div className="mt-8 pt-4 border-t border-stone-100 flex flex-wrap items-center gap-2">

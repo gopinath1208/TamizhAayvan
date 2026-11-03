@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { NEWS_CATEGORIES } from '../../types/news';
 import { useAds } from '../../context/AdContext';
+import { useNews } from '../../context/NewsContext';
 import {
   Calendar,
   CloudSun,
@@ -14,7 +15,8 @@ import {
   EyeOff,
   Sparkles,
   Phone,
-  Mail
+  Mail,
+  RefreshCw
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -33,6 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
   onSearch
 }) => {
   const { activeCount, highlightSlots, setHighlightSlots } = useAds();
+  const { wpPostsCount, isRefreshing, refreshNews } = useNews();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -89,6 +92,19 @@ export const Header: React.FC<HeaderProps> = ({
               <span>விளம்பர மேலாண்மை</span>
               <span className="bg-amber-500/20 text-amber-300 text-[10px] px-1 rounded font-mono">
                 {activeCount}
+              </span>
+            </button>
+
+            {/* WordPress CMS live sync trigger */}
+            <button
+              onClick={() => refreshNews()}
+              className="flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] bg-stone-800 hover:bg-stone-700 text-stone-300 transition-colors"
+              title="WordPress புதிய செய்திகளை உடனடியாகப் புதுப்பிக்க (Sync WordPress)"
+            >
+              <RefreshCw className={`w-3 h-3 text-sky-400 ${isRefreshing ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">WP நேரலை</span>
+              <span className="text-[10px] bg-sky-500/20 text-sky-300 px-1 rounded font-mono">
+                {wpPostsCount > 0 ? `${wpPostsCount} செய்திகள்` : 'இணைக்கப்பட்டது'}
               </span>
             </button>
 

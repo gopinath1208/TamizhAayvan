@@ -3,10 +3,16 @@ import { BREAKING_NEWS_HEADLINES } from '../../data/mockNews';
 import { Flame } from 'lucide-react';
 
 interface BreakingNewsTickerProps {
+  headlines?: string[];
   onSelectHeadline?: (index: number) => void;
 }
 
-export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({ onSelectHeadline }) => {
+export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({
+  headlines = BREAKING_NEWS_HEADLINES,
+  onSelectHeadline
+}) => {
+  const displayHeadlines = headlines.length > 0 ? headlines : BREAKING_NEWS_HEADLINES;
+
   return (
     <div className="w-full bg-stone-900 border-y border-stone-800 text-white overflow-hidden py-1.5 flex items-center my-2 shadow-xs">
       <div className="max-w-7xl mx-auto w-full px-4 flex items-center gap-3">
@@ -19,7 +25,7 @@ export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({ onSelect
         {/* Continuous Marquee Ticker */}
         <div className="overflow-hidden relative w-full mask-linear-fade">
           <div className="animate-ticker flex items-center gap-8 text-xs font-medium text-stone-200">
-            {BREAKING_NEWS_HEADLINES.map((headline, idx) => (
+            {displayHeadlines.map((headline, idx) => (
               <span
                 key={idx}
                 onClick={() => onSelectHeadline && onSelectHeadline(idx)}
@@ -30,7 +36,7 @@ export const BreakingNewsTicker: React.FC<BreakingNewsTickerProps> = ({ onSelect
               </span>
             ))}
             {/* Duplicated for seamless infinite ticker loop */}
-            {BREAKING_NEWS_HEADLINES.map((headline, idx) => (
+            {displayHeadlines.map((headline, idx) => (
               <span
                 key={`dup-${idx}`}
                 onClick={() => onSelectHeadline && onSelectHeadline(idx)}
